@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple custom MXML TitleWindow component.
+The TitleWindowApp application displays this component. 
+You cannot run it independently. -->
+
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+				title="Ativo" 
+				x="0" 
+				y="0" 
+				showCloseButton="true" 
+				close="{titlewindow1_closeHandler(event)}" 
+				creationComplete="titlewindow1_creationCompleteHandler(event)"
+				borderAlpha="0.75" 
+				xmlns:amcharts="http://www.amcharts.com/com_internal"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				width="495"
+				height="350"
+				backgroundColor="0x000000" xmlns:local="*"
+				>
+	
+	<mx:Script>
+		<![CDATA[       
+			import com.amcharts.stock.events.StockBulletEvent;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.DateField;
+			import mx.controls.Text;
+			import mx.events.CalendarLayoutChangeEvent;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.utils.ObjectUtil;
+			
+			public var item:Object;
+			[Bindable] private var chartData:ArrayCollection = new ArrayCollection();
+			
+			private function formatar_datefield_no_padrao_brasileiro( datefield:DateField ):void{
+				datefield.dayNames=['D','S','T','Q','Q','S','S'];
+				datefield.monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+				datefield.formatString="DD/MM/YYYY";
+			}
+			
+			protected function titlewindow1_closeHandler(event:CloseEvent):void{
+				PopUpManager.removePopUp(this);
+				item.@enabled = true;
+			}
+			
+			protected function titlewindow1_creationCompleteHandler(event:FlexEvent):void{
+				generateChartData();
+				formatar_datefield_no_padrao_brasileiro( dtInicio );
+				formatar_datefield_no_padrao_brasileiro( dtFim );
+			}
+			
+			private function generateChartData():void
+			{
+				var firstDate:Date = new Date();
+				firstDate.setMinutes(firstDate.getMinutes() - 2000);
+				
+				for(var i:Number = 0; i < 2000; i++)
+				{
+					var newDate:Date = new Date(firstDate);
+					
+					newDate.setMinutes(newDate.getMinutes() + i);
+					
+					var a:Number = Math.round(Math.random() * (40 + i)) + 100 + i;
+					var b:Number   = Math.round(Math.random() * (1000 + i)) + 500 + i * 2;
+					
+					chartData.addItem({date:newDate, a:a, b:b});
+				}
+			}
+			
+
+			protected function btExportarParaXls_clickHandler(event:MouseEvent):void{
+				
+				Alert.show( ObjectUtil.toString( timeEntryInicio.date ) );
+				Alert.show( ObjectUtil.toString( timeEntryFim.date ) );
+				
+			}
+
+		]]>
+	</mx:Script>
+	
+	<s:VGroup width="100%" 
+			  height="100%" 
+			  paddingBottom="5" 
+			  paddingTop="5" 
+			  paddingLeft="5" 
+			  paddingRight="5">
+		
+		<mx:ApplicationControlBar dock="true" 
+								  horizontalAlign="left"
+								  borderStyle="none"
+								  >
+			<s:Scroller width="{this.width - 56}">
+				<s:HGroup width="100%">
+					<s:HGroup>
+						<s:Label id="labelAtivo" 
+								 color="0xffffff"
+								 text="Ativo:"
+								 verticalAlign="middle"
+								 height="{tiAtivo.height}"
+								 />
+						
+							<s:TextInput id="tiAtivo"
+										 color="0x323232"
+										 width="55"
+										 />
+							
+						<mx:Button id="btOK" 
+								   label=">"
+								   color="0xffffff"
+								   fontWeight="bold"
+								   toolTip="Selecionar ativo"
+								   />
+							
+						<mx:Button id="btExportarParaXls" 
+								   label=".xls"
+								   color="0xffffff"
+								   click="btExportarParaXls_clickHandler(event)"
+								   toolTip="Exportar dados para .xls"
+								   />
+					</s:HGroup>
+					
+				</s:HGroup>
+			</s:Scroller>
+		</mx:ApplicationControlBar>
+		
+		<amcharts:AmStockChart width="100%" 
+							   height="100%"
+							   color="0xffffff"
+							   >
+			<amcharts:dataSets>
+				<amcharts:DataSet id="amchartsDataSet"
+								  color="#00FF00"
+								  dataProvider="{chartData}" 
+								  categoryField="date" 
+								  title="Dados aleatórios. Selecione algum ativo..."
+								  >                
+					<amcharts:fieldMappings>
+						<amcharts:FieldMapping fromField="a" toField="value"/>
+						<amcharts:FieldMapping fromField="b" toField="volume"/>
+					</amcharts:fieldMappings>                
+				</amcharts:DataSet>    
+			</amcharts:dataSets>
+			
+			<amcharts:panels>				
+				<!-- to enabled drawing icons, you only need to set drawingIconsEnabled="true" on StockPanel -->				
+				<amcharts:StockPanel drawingIconsEnabled="true" 
+									 title="Value" 
+									 height="50%" 
+									 showCategoryAxis="false"
+									 color="0xffffff"
+									 plotAreaBorderColor="0xffffff"
+									 plotAreaFillColors="[0x222222,0x000000]"
+									 trendLineThickness="0"
+									 >
+					<amcharts:stockGraphs>
+						<amcharts:StockGraph bulletBorderColor="#FFFFFF" 
+											 bulletBorderThickness="1"
+											 bulletColor="0x00ff00"
+											 bulletSize="3"
+											 fillColors="[0x000000,0x000000]"
+											 
+											 color="0x000000"
+											 
+											 lineThickness="1"
+											 lineAlpha="2"
+											 lineColor="0x000000"
+											 
+											 bullet="round" 
+											 id="g1" 
+											 valueField="value" 
+											 compareField="value" 
+											 comparable="true"/>                        
+					</amcharts:stockGraphs>
+					<amcharts:stockLegend>
+						<amcharts:StockLegend/>                        
+					</amcharts:stockLegend>
+				</amcharts:StockPanel>
+			</amcharts:panels>
+			
+			<amcharts:chartScrollbarSettings>
+				<amcharts:ChartScrollbarSettings height="20" 
+												 graph="{g1}"
+												 color="0x000000"
+												 />
+			</amcharts:chartScrollbarSettings>
+			
+			<amcharts:categoryAxesSettings>
+				<amcharts:CategoryAxesSettings minPeriod="mm"/>
+			</amcharts:categoryAxesSettings>
+			
+			<amcharts:chartCursorSettings>
+				<amcharts:ChartCursorSettings crosshair="true"/>
+			</amcharts:chartCursorSettings>
+			
+		</amcharts:AmStockChart>
+		
+		<mx:ApplicationControlBar dock="false"
+								  horizontalAlign="left"
+								  borderStyle="none"
+								  >
+			<s:Scroller width="{this.width - 56}">
+				<s:HGroup width="100%">
+						
+					<s:Label text="De:"
+							 color="0xffffff"
+							 height="100%"
+							 verticalAlign="middle"
+							 />
+					<mx:DateField id="dtInicio"
+								  selectedDate="{new Date()}"
+								  />
+					<local:TimeEntry id="timeEntryInicio"
+									 date="{dtInicio.selectedDate}"
+									 />
+					
+					<s:Label text="até:" 
+							 color="0xffffff"
+							 height="100%"
+							 verticalAlign="middle"
+							 />
+					<mx:DateField id="dtFim"
+								  selectedDate="{new Date()}"
+								  />
+					<local:TimeEntry id="timeEntryFim"
+									 date="{dtFim.selectedDate}"
+									 />
+						
+				</s:HGroup>
+			</s:Scroller>
+		</mx:ApplicationControlBar>
+	</s:VGroup>
+	
+</mx:TitleWindow>

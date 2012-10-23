@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+		   width="100%" 
+		   xmlns:controls="br.ufla.lemaf.lemaflex.controls.*"
+		   creationComplete="init();"
+		   >
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.StateChangeEvent;
+			
+			private var _hours   : int  = 1;
+			private var _minutes : int  = 0;
+			private var _date    : Date = new Date();
+			
+			
+			private function init():void{
+				minuteControl.addEventListener( KeyboardEvent.KEY_UP, keyPressedOnMinuteControl );
+				hourControl.addEventListener( KeyboardEvent.KEY_UP, keyPressedOnHourControl );
+			}
+			
+			private function keyPressedOnMinuteControl(evt:KeyboardEvent):void{
+				if( parseInt( minuteControl.text ) > 59 ){
+					_date.minutes  = 0;                
+					_minutes           = _date.minutes;                
+					minuteControl.text = (_minutes.toString().length > 1 ? _minutes.toString() : '0'+_minutes.toString() );     
+				}
+			}
+			
+			private function keyPressedOnHourControl(evt:KeyboardEvent):void{
+				if( parseInt( hourControl.text ) > 23 ){
+					_date.hours  = 0;                
+					hours_ = _date.hours;
+				}
+			}
+			
+			public function get minutes() : int {
+				return _minutes;
+			}
+			
+			public function get hours() : int {
+				return _hours;
+			}
+			
+			private function set hours_(h:int) : void { // the _ is to resovle an annoying flex error ...
+				_hours = h;                
+				hourControl.text = (hoursText.length > 1 ? hoursText : '0'+hoursText );
+			}
+			
+			public function get hoursText() : String {
+				return _hours.toString();
+			}
+			
+			public function get date() : Date {                
+				_date.hours   = _hours;
+				_date.minutes = parseInt(minuteControl.text);
+				
+				return _date;
+			}
+			
+			public function set date(d:Date) : void {
+				_date  = d;                
+				hours_ = d.hours;
+				
+				_minutes           = d.minutes;
+				minuteControl.text = (_minutes.toString().length > 1 ? _minutes.toString() : '0'+_minutes.toString() );
+			}
+			
+			private function getExpectedTimeValue(charCode:uint, control:TextInput) : int {                
+				var value : String = String.fromCharCode(charCode);
+				var sdiff : int    = (control.selectionEndIndex - control.selectionBeginIndex);
+				var text  : String = control.text;
+				
+				if (sdiff == 2) { // the whole val is selected
+					text = "";
+				}
+				else if (sdiff == 1) { // one numeral is selected
+					if (control.selectionBeginIndex) {
+						text = control.text.substr(0, 1);
+					}
+					else {
+						text = control.text.substr(1, 1);
+					}
+				}
+				
+				if (control.selectionBeginIndex) {
+					value = text + value;
+				}
+				else {
+					value += text; 
+				}               
+				
+				return parseInt(value);
+			}
+			
+			private function onHourKeyDown(ev:KeyboardEvent) : void {
+				var newHour : int = _hours;
+				
+				switch (ev.keyCode) {
+					case Keyboard.UP:
+						++newHour;
+						break;
+					case Keyboard.DOWN:
+						--newHour;
+						break;
+					case Keyboard.BACKSPACE:
+					case Keyboard.DELETE:                        
+						if (hourControl.selectionBeginIndex) {
+							newHour = parseInt(hourControl.text.substr(0, 1));
+						}
+						
+						break;
+					case Keyboard.TAB:
+					case Keyboard.LEFT:
+					case Keyboard.RIGHT:
+						break;
+					default:
+						switch (ev.charCode) {
+							case 0x30: case 0x31: case 0x32:
+							case 0x33: case 0x34: case 0x35:
+							case 0x36: case 0x37: case 0x38:
+							case 0x39:
+								newHour = getExpectedTimeValue(ev.charCode, hourControl);
+								break;
+							
+							default: 
+								ev.preventDefault();
+								return;
+						}
+				}
+				
+				if (newHour < 0) {
+					ev.preventDefault();
+					return;
+				}
+				
+				if (newHour > 23) {
+					ev.preventDefault();
+					return;
+				}
+				
+				this.hours_ = newHour;
+			}
+			
+			private function onMinuteKeyDown(ev:KeyboardEvent) : void {
+				var newMinute : int = parseInt(minuteControl.text);
+				
+				switch (ev.keyCode) {
+					case Keyboard.UP:
+						++newMinute;
+						break;
+					case Keyboard.DOWN:
+						--newMinute;
+						break;
+					case Keyboard.BACKSPACE:
+					case Keyboard.DELETE:
+					case Keyboard.TAB:
+					case Keyboard.LEFT:
+					case Keyboard.RIGHT:
+						break;
+					default:
+						switch (ev.charCode) {
+							case 0x30: case 0x31: case 0x32:
+							case 0x33: case 0x34: case 0x35:
+							case 0x36: case 0x37: case 0x38:
+							case 0x39:
+								newMinute = getExpectedTimeValue(ev.charCode, minuteControl);
+								break;
+							
+							default: 
+								ev.preventDefault();
+								return;
+						}
+				}
+				
+				if (newMinute < 0) {
+					ev.preventDefault();
+					return;
+				}
+				
+				if (newMinute > 59) {
+					ev.preventDefault();
+					return;
+				}
+				
+				_minutes = newMinute;
+				minuteControl.text = (_minutes.toString().length > 1 ? _minutes.toString() : '0'+_minutes.toString() );
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mx:HBox horizontalGap="2">
+		
+		<mx:TextInput id="hourControl" 
+					  textAlign="center" 
+					  maxChars="2" 
+					  restrict="0-9" 
+					  keyDown="onHourKeyDown(event)"
+					  width="30"
+					  />
+		<mx:Label text=":" 
+				  fontSize="14"
+				  textAlign="center"
+				  paddingLeft="-8"
+				  paddingRight="-8"
+				  color="0xfffffff"
+				  />
+		<mx:TextInput id="minuteControl" 
+					  textAlign="center" 
+					  maxChars="2"
+					  restrict="0-9" 
+					  keyDown="onMinuteKeyDown(event)" 
+					  width="30"
+					  />
+		
+	</mx:HBox>
+</mx:Canvas>

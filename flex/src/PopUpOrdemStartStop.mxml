@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple custom MXML TitleWindow component.
+The TitleWindowApp application displays this component. 
+You cannot run it independently. -->
+
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+				title="Orderm Start/Stop" 
+				x="0" 
+				y="0" 
+				showCloseButton="true" 
+				close="titlewindow1_closeHandler(event)" 
+				creationComplete="titlewindow1_creationCompleteHandler(event)"
+				backgroundColor="0x000000"
+				borderAlpha="0.75" 
+				xmlns:amcharts="http://www.amcharts.com/com_internal"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				>
+	
+	<mx:Script>
+		<![CDATA[       
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			
+			public var item:Object;
+			
+			protected function titlewindow1_creationCompleteHandler(event:FlexEvent):void{
+			}
+			
+
+			protected function titlewindow1_closeHandler(event:CloseEvent):void{
+				PopUpManager.removePopUp(this);
+				item.@enabled = true;
+			}
+
+		]]>
+	</mx:Script>
+	
+	<s:VGroup width="100%" 
+			  height="100%" 
+			  paddingBottom="1" 
+			  paddingTop="1" 
+			  paddingLeft="1" 
+			  paddingRight="1">
+		
+		<s:HGroup id="groupTipoOrdem"
+				  width="215"
+				  >
+			<s:RadioButton id="compraRadioBtn" 
+						   label="Compra" 
+						   groupName="groupTipoOrdem"
+						   color="0xffffff"
+						   />
+			<s:RadioButton id="vendaRadioBtn" 
+						   label="Venda" 
+						   groupName="groupTipoOrdem"
+						   color="0xffffff"
+						   />
+		</s:HGroup> 
+		<s:HGroup width="{groupTipoOrdem.width}">
+			<s:TextInput width="100%"
+						 />
+			<mx:Button label="Buscar"
+					   color="0xffffff"
+					   />
+		</s:HGroup>
+		
+		<s:HGroup width="{groupTipoOrdem.width}">
+			<s:VGroup width="33%">
+				<s:Label text="Tipo" 
+						 color="0xffffff"
+						 />
+				<s:TextInput width="100%"/>
+			</s:VGroup> 
+			<s:VGroup width="33%">
+				<s:Label text="Qtd.Disp."
+						 color="0xffffff"
+						 />
+				<s:TextInput width="100%"/>
+			</s:VGroup> 
+			<s:VGroup width="33%">
+				<s:Label text="Situação"
+						 color="0xffffff"
+						 />
+				<s:TextInput width="100%"/>
+			</s:VGroup> 
+		</s:HGroup>
+		
+		<s:HGroup width="{groupTipoOrdem.width}">
+			<s:VGroup width="33%">
+				<s:Label text="Preço Disparo" 
+						 color="0xffffff"
+						 />
+				<s:TextInput width="100%"/>
+			</s:VGroup> 
+			<s:VGroup width="33%">
+				<s:Label text="Preço Compra"
+						 color="0xffffff"
+						 />
+				<s:TextInput width="100%"/>
+			</s:VGroup> 
+			<s:VGroup width="33%">
+				<s:Label text="Quant."
+						 color="0xffffff"
+						 />
+				<s:TextInput width="100%"/>
+			</s:VGroup> 
+		</s:HGroup>
+		
+		<s:HGroup width="{groupTipoOrdem.width}">
+			<s:Label text="Data de Expiração" 
+					 color="0xffffff"
+					 height="100%"
+					 verticalAlign="middle"
+					 />
+			<mx:DateField />
+		</s:HGroup>
+		
+		<mx:Spacer width="5" />
+		
+		<mx:ApplicationControlBar width="100%"
+								  horizontalAlign="center">
+			<mx:Button label="Enviar" />
+		</mx:ApplicationControlBar>
+		
+	</s:VGroup>
+	
+</mx:TitleWindow>

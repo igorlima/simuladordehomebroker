@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple custom MXML TitleWindow component.
+The TitleWindowApp application displays this component. 
+You cannot run it independently. -->
+
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+				title="Intraday" 
+				x="0" 
+				y="0" 
+				showCloseButton="true" 
+				close="titlewindow1_closeHandler(event)" 
+				creationComplete="titlewindow1_creationCompleteHandler(event)"
+				backgroundColor="0x000000"
+				borderAlpha="0.75" 
+				xmlns:amcharts="http://www.amcharts.com/com_internal"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				width="240"
+				height="214"
+				>
+	<mx:Style>
+		.panel
+		{
+			background-color: #000000;
+		}
+	</mx:Style>
+	<mx:Script>
+		<![CDATA[       
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.Button;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.utils.ObjectUtil;
+			
+			import spark.components.supportClasses.TextBase;
+			
+			public var item:Object;
+			[Bindable] private var chartData:ArrayCollection = new ArrayCollection();
+			
+			protected function titlewindow1_creationCompleteHandler(event:FlexEvent):void{
+				generateChartData();
+			}
+			
+			protected function titlewindow1_closeHandler(event:CloseEvent):void{
+				PopUpManager.removePopUp(this);
+				item.@enabled = true;
+			}
+			
+			private function generateChartData():void
+			{
+				var firstDate:Date = new Date();
+				firstDate.setMinutes(firstDate.getMinutes() - 2000);
+				
+				for(var i:Number = 0; i < 2000; i++)
+				{
+					var newDate:Date = new Date(firstDate);
+					
+					newDate.setMinutes(newDate.getMinutes() + i);
+					
+					var a:Number = Math.round(Math.random() * (40 + i)) + 100 + i;
+					var b:Number   = Math.round(Math.random() * (1000 + i)) + 500 + i * 2;
+					
+					chartData.addItem({date:newDate, a:a, b:b});
+				}
+			}
+		]]>
+	</mx:Script>
+	
+	<amcharts:AmStockChart width="100%" 
+						   height="100%" 
+						   color="0x000000"
+						   >
+		<amcharts:dataSets  >
+			<amcharts:DataSet color="#00CC00" dataProvider="{chartData}" categoryField="date" title="" >                
+				<amcharts:fieldMappings>
+					<amcharts:FieldMapping fromField="a" toField="value" />
+					<amcharts:FieldMapping fromField="b" toField="volume" />
+				</amcharts:fieldMappings>                
+			</amcharts:DataSet>    
+		</amcharts:dataSets>
+		
+		<amcharts:panels>				
+			<!-- to enabled drawing icons, you only need to set drawingIconsEnabled="true" on StockPanel -->				
+			<amcharts:StockPanel drawingIconsEnabled="false" 
+								 title="" 
+								 height="100%" 
+								 showCategoryAxis="false"
+								 color="0xffffff"
+								 plotAreaBorderColor="0x000000"
+								 plotAreaFillColors="[0x000000,0x222222]"
+								 trendLineThickness="0"
+								 >
+				
+				<amcharts:stockGraphs>
+					<amcharts:StockGraph bulletBorderColor="#000000"
+										 bulletBorderThickness="1"
+										 bulletColor="0x00ff00"
+										 bulletSize="3"
+										 fillColors="[0x000000,0x000000]"
+										 
+										 color="0x000000"
+										 
+										 lineThickness="1"
+										 lineAlpha="2"
+										 lineColor="0x000000"
+										 
+										 bullet="round" 
+										 id="g1" 
+										 valueField="value" 
+										 compareField="value" 
+										 comparable="true"
+										 />                        
+				</amcharts:stockGraphs>
+				<amcharts:stockLegend>
+					<amcharts:StockLegend visible="false" includeInLayout="false"/>                        
+				</amcharts:stockLegend>
+			</amcharts:StockPanel>
+		</amcharts:panels>
+		
+		<amcharts:chartScrollbarSettings>
+			<amcharts:ChartScrollbarSettings height="5" graph="{g1}"/>
+		</amcharts:chartScrollbarSettings>
+		
+		<amcharts:categoryAxesSettings>
+			<amcharts:CategoryAxesSettings minPeriod="mm"/>
+		</amcharts:categoryAxesSettings>
+		
+		<amcharts:chartCursorSettings>
+			<amcharts:ChartCursorSettings crosshair="true"
+										  cursorColor="0xff0000"
+										  selectWithoutZooming="false"
+										  zoomable="false"
+										  />
+		</amcharts:chartCursorSettings>
+		
+	</amcharts:AmStockChart>
+	
+</mx:TitleWindow>

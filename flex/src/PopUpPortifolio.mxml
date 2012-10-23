@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple custom MXML TitleWindow component.
+The TitleWindowApp application displays this component. 
+You cannot run it independently. -->
+
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+				title="Portifólio" 
+				x="0" 
+				y="0" 
+				showCloseButton="true" 
+				close="titlewindow1_closeHandler(event)" 
+				creationComplete="titlewindow1_creationCompleteHandler(event)"
+				backgroundColor="0x000000"
+				borderAlpha="0.75" 
+				xmlns:amcharts="http://www.amcharts.com/com_internal"
+				xmlns:s="library://ns.adobe.com/flex/spark" xmlns:local="*"
+				>
+	
+	<mx:Script>
+		<![CDATA[       
+			import mx.controls.Button;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			
+			public var item:Object;
+			
+			protected function titlewindow1_creationCompleteHandler(event:FlexEvent):void{
+			}
+			
+
+			protected function titlewindow1_closeHandler(event:CloseEvent):void{
+				PopUpManager.removePopUp(this);
+				item.@enabled = true;
+			}
+			
+			private function calcRowColor(item:Object, rowIndex:int, 
+										  dataIndex:int, color:uint):uint
+			{
+				if(item.read == true)
+					return 0x49FFAD;
+				else
+					return 0x000000;
+			}
+
+		]]>
+	</mx:Script>
+	
+	<mx:XMLList id="ativos">
+		<ativo>
+			<ativo>IBOV</ativo>
+			<ultimo>67.144,26</ultimo>
+			<variacao>0.26</variacao>
+			<qtdCompra>0</qtdCompra>
+			<melhorOfertaCompra>-</melhorOfertaCompra>
+			<melhorOfertaVenda>-</melhorOfertaVenda>
+			<qtdVenda>0</qtdVenda>
+			<maximo>67.413,16</maximo>
+			<minimo>66.722,43</minimo>
+			<hora>17:45</hora>
+		</ativo>
+		<ativo>
+			<ativo>PRBC4</ativo>
+			<ultimo>12,25</ultimo>
+			<variacao>-0.65</variacao>
+			<qtdCompra>500</qtdCompra>
+			<melhorOfertaCompra>12,00</melhorOfertaCompra>
+			<melhorOfertaVenda>12,34</melhorOfertaVenda>
+			<qtdVenda>500</qtdVenda>
+			<maximo>12,32</maximo>
+			<minimo>12,19</minimo>
+			<hora>17:30</hora>
+		</ativo>
+		<ativo>
+			<ativo>IDVL4</ativo>
+			<ultimo>8,99</ultimo>
+			<variacao>-0.11</variacao>
+			<qtdCompra>1.200</qtdCompra>
+			<melhorOfertaCompra>8,95</melhorOfertaCompra>
+			<melhorOfertaVenda>8,99</melhorOfertaVenda>
+			<qtdVenda>8.500</qtdVenda>
+			<maximo>9,00</maximo>
+			<minimo>8,91</minimo>
+			<hora>17:00</hora>
+		</ativo>
+		<ativo>
+			<ativo>BBAS3</ativo>
+			<ultimo>29,33</ultimo>
+			<variacao>1.14</variacao>
+			<qtdCompra>700</qtdCompra>
+			<melhorOfertaCompra>29,33</melhorOfertaCompra>
+			<melhorOfertaVenda>29,35</melhorOfertaVenda>
+			<qtdVenda>1200</qtdVenda>
+			<maximo>29,51</maximo>
+			<minimo>29,03</minimo>
+			<hora>18:11</hora>
+		</ativo>
+		<ativo>
+			<ativo>DAYC4</ativo>
+			<ultimo>12,40</ultimo>
+			<variacao>1.64</variacao>
+			<qtdCompra>800</qtdCompra>
+			<melhorOfertaCompra>11,90</melhorOfertaCompra>
+			<melhorOfertaVenda>12,48</melhorOfertaVenda>
+			<qtdVenda>700</qtdVenda>
+			<maximo>12,40</maximo>
+			<minimo>11,88</minimo>
+			<hora>17:54</hora>
+		</ativo>
+		<ativo>
+			<ativo>VALE5</ativo>
+			<ultimo>46,77</ultimo>
+			<variacao>0.02</variacao>
+			<qtdCompra>800</qtdCompra>
+			<melhorOfertaCompra>46,76</melhorOfertaCompra>
+			<melhorOfertaVenda>46,77</melhorOfertaVenda>
+			<qtdVenda>200</qtdVenda>
+			<maximo>46,90</maximo>
+			<minimo>46,51</minimo>
+			<hora>18:14</hora>
+		</ativo>
+	</mx:XMLList>
+	
+	<s:VGroup width="100%" 
+			  height="100%" 
+			  paddingBottom="1" 
+			  paddingTop="1" 
+			  paddingLeft="1" 
+			  paddingRight="1">
+		
+		<local:DataGridPortifolio id="dg" 
+								  color="0xffffff"
+								  width="725" 
+								  rowCount="8" 
+								  dataProvider="{ativos}"
+								  headerColors="[0x333333,0x323232]"
+								  rowColorFunction="calcRowColor"
+								  >
+			<local:columns >
+				
+				<mx:DataGridColumn dataField="ativo" 
+								   headerText="Ativo"
+								   />
+				<mx:DataGridColumn dataField="ultimo" 
+								   headerText="Último"
+								   />
+				<mx:DataGridColumn dataField="variacao" 
+								   headerText="Var.(%)"
+								   itemRenderer="DataGridPortifolioLabel"
+								   />
+				<mx:DataGridColumn dataField="qtdCompra" 
+								   headerText="Qtd.Compra"
+								   />
+				<mx:DataGridColumn dataField="melhorOfertaCompra" 
+								   headerText="M.Compra"
+								   />
+				<mx:DataGridColumn dataField="melhorOfertaVenda" 
+								   headerText="M.Venda"
+								   />
+				<mx:DataGridColumn dataField="qtdVenda" 
+								   headerText="Qtd.Venda"
+								   />
+				<mx:DataGridColumn dataField="maximo" 
+								   headerText="Máximo"
+								   />
+				<mx:DataGridColumn dataField="minimo" 
+								   headerText="Mínimo"
+								   />
+				<mx:DataGridColumn dataField="hora" 
+								   headerText="Hora"
+								   />
+			</local:columns>
+			
+		</local:DataGridPortifolio>
+		
+	</s:VGroup>
+	
+</mx:TitleWindow>

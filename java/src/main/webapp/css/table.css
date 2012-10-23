@@ -1,0 +1,11 @@
+.table{
+	width: 100%;
+	height: auto;
+	margin: 0 auto;
+	border: 1px solid;
+	border-collapse: collapse;
+}
+
+.table tbody tr{
+	height: 20px;
+}
